@@ -1,0 +1,95 @@
+/* 기존 달력 스타일 그대로 유지 */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-top: 20px;
+}
+
+.weekday {
+  font-weight: bold;
+  text-align: center;
+  padding: 5px 0;
+  background-color: #e0f2f1;
+  border: 1px solid #ddd;
+}
+
+.empty-cell {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  height: 60px;
+}
+
+.day {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 60px;
+  transition: 0.2s;
+}
+
+.day:hover {
+  background-color: #b2ebf2;
+}
+
+.event-name {
+  margin-top: 5px;
+  font-size: 0.75rem;
+  color: #00796b;
+  text-align: center;
+}
+
+/* 모달 오버레이 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* 화면 비율 기반 모달 */
+.modal {
+  position: relative; /* X 버튼 위치 기준 */
+  background-color: #fff;
+  padding: 2%;
+  border-radius: 8px;
+
+  width: 50vw; /* 화면 너비 50% */
+  max-width: 600px; /* 최대 너비 */
+  min-width: 300px; /* 최소 너비 */
+
+  height: 50vh; /* 화면 높이 50% */
+  max-height: 500px; /* 최대 높이 */
+  min-height: 200px; /* 최소 높이 */
+
+  text-align: center;
+  overflow: auto; /* 내용 많으면 스크롤 */
+}
+
+/* X 버튼 스타일 */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: #f00;
+}
