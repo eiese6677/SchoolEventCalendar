@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
-import Day from "./Day";
+import Day from "./Day.jsx";
 
 function Calendar() {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState({});
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [currentYear, setCurrentYear] = useState(2025);
   const [currentMonth, setCurrentMonth] = useState(9); // 0=1월, 9=10월
@@ -18,9 +18,14 @@ function Calendar() {
 
   useEffect(() => {
     fetch("http://localhost:5000/api/events")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return res.json();
+      })
       .then((data) => setEvents(data))
-      .catch((err) => console.error(err));
+      .catch((err) => console.error("Failed to fetch events:", err));
   }, []);
 
   const handleDayClick = (day) => {
