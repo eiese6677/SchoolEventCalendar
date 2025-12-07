@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Github\\SchoolEventCalendar\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{328121F3-38C2-C329-0245-F6EFE82A1CF8}|schooleventcalendar.esproj|d:\\github\\schooleventcalendar\\backend\\app.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{328121F3-38C2-C329-0245-F6EFE82A1CF8}|schooleventcalendar.esproj|solutionrelative:backend\\app.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "app.py",
+              "DocumentMoniker": "D:\\Github\\SchoolEventCalendar\\backend\\app.py",
+              "RelativeDocumentMoniker": "backend\\app.py",
+              "ToolTip": "D:\\Github\\SchoolEventCalendar\\backend\\app.py",
+              "RelativeToolTip": "backend\\app.py",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2025-12-07T06:16:05.246Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
