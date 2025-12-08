@@ -1,115 +1,87 @@
-School Event Calendar Web App
-프로젝트 개요
+# School Event Calendar (학사일정 캘린더)
 
-학생들이 학교 행사, 수행평가, 지필고사 등의 일정을 한눈에 보고, 클릭하면 상세 내용을 확인할 수 있는 웹 애플리케이션.
-이번 업데이트로 연도·월별 이벤트 구분, 모달 크기 화면 비율 적용, X 버튼 닫기 기능까지 적용됨.
+학교 행사, 수행평가, 지필고사 등의 일정을 관리하고 시간표를 조회할 수 있는 웹 애플리케이션입니다.
+React 프론트엔드와 Flask 백엔드로 구성되어 있으며, 컴시간(Comci) 시간표 파싱 기능을 포함하고 있습니다.
 
-목표
+## 🚀 주요 기능
 
-학교 관련 일정 통합 관리
+### 1. 캘린더 (Calendar)
+- **월별/연도별 보기**: 캘린더 형식으로 일정을 직관적으로 확인.
+- **일정 관리 (CRUD)**:
+    - 일정 추가, 수정, 삭제 기능.
+    - 완료 여부 표시.
+    - 상세 내용은 모달 창을 통해 확인 및 수정 가능.
 
-클릭 시 상세 정보 확인 (모달)
+### 2. 시간표 파싱 (Board API) (지원 예정)
+- `comci_parser.py`를 통해 컴시간 서버에서 학급 시간표 데이터를 실시간으로 크롤링 및 파싱.
+- 학년, 반 별 시간표 조회 지원.
 
-월/연도별 이벤트 표시
+## 🛠️ 기술 스택 (Tech Stack)
 
-PC/모바일 웹 모두 지원
+- **Frontend**: React 19, Vite, CSS Modules
+- **Backend**: Python Flask
+- **Database**: JSON 파일 기반 로컬 저장소 (`events.json`)
+- **Utility**: Python `requests` (시간표 파싱용)
 
-기술 스택
+## 📂 프로젝트 구조
 
-Frontend: React, HTML, CSS
+```
+/
+├── src/                  # React 프론트엔드 소스
+│   ├── components/       # Calendar, Day 등 UI 컴포넌트
+│   ├── App.jsx           # 메인 애플리케이션 컴포넌트
+│   └── main.jsx          # 진입점
+├── flask-server/         # Flask 백엔드 서버
+│   ├── app.py            # API 서버 및 데이터 처리 로직
+│   └── events.json       # 일정 데이터 저장 파일
+├── public/               # 정적 파일
+├── comci_parser.py       # 컴시간 시간표 파싱 스크립트
+├── vite.config.js        # Vite 설정
+└── README.md             # 프로젝트 문서
+```
 
-Backend: Python Flask
+## 💿 설치 및 실행 방법
 
-Database: JSON 파일 (추후 SQLite/PostgreSQL 연동 가능)
+### 1. 백엔드 (Backend) 설정
 
-Deployment: 라즈베리파이 OS 또는 Ubuntu
+Python 환경이 필요합니다.
 
-핵심 기능
+```bash
+# 1. 백엔드 디렉토리로 이동 (또는 루트에서)
+cd flask-server
 
-🗓️ 달력 UI
+# 2. 필요한 라이브러리 설치
+pip install flask flask-cors requests
 
-연도/월별 이동 가능
+# 3. 서버 실행
+python app.py
+```
+* 서버는 기본적으로 `http://localhost:5000`에서 실행됩니다.
 
-각 날짜에 이벤트 표시
+### 2. 프론트엔드 (Frontend) 설정
 
-🔍 상세 이벤트 모달
+Node.js 환경이 필요합니다.
 
-클릭 시 모달로 이벤트 상세 정보 표시
+```bash
+# 1. 루트 디렉토리에서 의존성 설치
+npm install
 
-모달 크기: 화면 비율 기준(vw/vh)
+# 2. 개발 서버 실행
+npm run dev
+```
+* 브라우저에서 `http://localhost:5173` (또는 터미널에 표시된 포트)으로 접속하여 확인합니다.
 
-닫기 버튼: 오른쪽 위 X 아이콘
+## 📝 API 명세
 
-➕ 관리자용 일정 추가/수정
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| GET | `/api/events` | 저장된 모든 일정 데이터를 조회합니다. |
+| POST | `/api/post_data` | 새로운 일정을 추가합니다. |
+| PUT | `/api/events/<id>` | 기존 일정을 수정합니다. |
+| DELETE | `/api/events/<id>` | 일정을 삭제합니다. |
+| PATCH | `/api/events/<id>/complete` | 일정의 완료 상태를 토글합니다. |
 
-현재는 JSON 기반, 추후 DB 연동 가능
+## 💡 참고 사항
 
-데이터 구조 (events.json)
-{
-"2025": {
-"10": [
-{ "day": 5, "title": "체육대회", "description": "체육관에서 열림" },
-{ "day": 12, "title": "과학실험", "description": "실험실에서 진행" }
-],
-"11": [
-{ "day": 1, "title": "독서의 날", "description": "도서관 행사" }
-]
-},
-"2026": {
-"1": [
-{ "day": 3, "title": "신년 행사", "description": "강당에서 진행" }
-]
-}
-}
-
-최상위 키: 연도
-
-두 번째 키: 월
-
-값: 해당 달 이벤트 배열
-
-프로젝트 구조
-/frontend
-├─ App.js
-├─ Calendar.jsx
-├─ Day.jsx
-└─ App.css
-/backend
-└─ app.py
-events.json
-README.md
-
-설치 및 실행
-
-1. Backend (Flask)
-   cd backend
-   pip install flask flask-cors
-   python app.py
-
-서버 주소: http://localhost:5000
-
-2. Frontend (React)
-   cd frontend
-   npm install
-   npm start
-
-브라우저 열면 달력 UI 확인 가능
-
-월/연도 버튼으로 이동 가능
-
-이벤트 클릭 시 모달 표시
-
-React 코드 수정 시 Flask 서버는 그대로 켜둬도 됨.
-Flask 코드나 events.json 변경 시에는 서버 재시작 필요.
-
-향후 확장 아이디어
-
-사용자 로그인 & 즐겨찾기 일정
-
-알림 기능 (디스코드/카톡/메일)
-
-다크 모드 및 테마
-
-DB 연동 및 관리자 UI 강화
-
-반응형 디자인 개선 (모바일 최적화)
+- **데이터 저장**: 데이터는 `flask-server/events.json` 파일에 저장되므로, 서버를 재시작해도 데이터가 유지됩니다.
+- **포트 충돌**: 5000번 포트가 사용 중일 경우 포트 설정을 변경하세요.

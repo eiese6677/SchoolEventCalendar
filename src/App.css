@@ -86,6 +86,12 @@ body {
   background-color: var(--cell-hover-bg);
 }
 
+.today {
+  border: 2px solid #2196F3;
+  background-color: #e3f2fd;
+  font-weight: bold;
+}
+
 .event-name {
   margin-top: 5px;
   font-size: 0.75rem;

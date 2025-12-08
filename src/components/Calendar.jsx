@@ -217,11 +217,19 @@ function Calendar() {
           if (!day) return <div key={idx} className="empty-cell"></div>;
           const events = eventMap.get(day);
           const titleString = events ? events.map((e) => e.title).join(", ") : null;
+
+          const todayDate = new Date();
+          const isToday =
+            day === todayDate.getDate() &&
+            currentMonth === todayDate.getMonth() &&
+            currentYear === todayDate.getFullYear();
+
           return (
             <Day
               key={idx}
               day={day}
               eventTitle={titleString}
+              isToday={isToday}
               onClick={() => handleDayClick(currentMonth + 1, day)}
             />
           );
