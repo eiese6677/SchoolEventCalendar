@@ -1,23 +1,20 @@
 {
-  "2026": {
-    "1": [
+  "2025": {
+    "12": [
       {
-        "day": 19,
-        "title": "내 생일",
+        "id": "10246132-894d-44ee-8469-e547875ac663",
+        "day": 1,
+        "title": "테스트",
         "description": ".",
-        "id": "07975525-0289-46f7-a8df-8ee6d0b788e6",
         "completed": false
       },
       {
+        "id": "5781b449-b06e-4ee3-ae76-44b336ba5bd0",
         "day": 1,
-        "title": "2",
+        "title": "test",
         "description": "2",
-        "id": "546bb954-339d-4128-aeeb-427b7a6ecc45",
         "completed": false
       }
     ]
-  },
-  "2025": {
-    "12": []
   }
 }

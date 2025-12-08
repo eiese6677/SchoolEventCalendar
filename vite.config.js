@@ -13,6 +13,7 @@ export default defineConfig({
                 secure: false,
             },
         },
-        port: 50716,
+        port: 3000,
+        allowedHosts: ["laila-centrosymmetric-overtartly.ngrok-free.dev"],
     }
 })
