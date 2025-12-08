@@ -90,6 +90,72 @@ def receive_data():
         "received_data": new_event
     }), 200
 
+@app.route('/api/events/<event_id>', methods=['PUT'])
+def update_event(event_id):
+    data = request.json
+    if not data:
+        return jsonify({"error": "No JSON data received"}), 400
+
+    existing_data = load_data()
+    found_event = None
+    original_location = None # (year, month, index)
+
+    # Find the event
+    for year in existing_data:
+        for month in existing_data[year]:
+            events = existing_data[year][month]
+            for i, event in enumerate(events):
+                if event.get("id") == event_id:
+                    found_event = event
+                    original_location = (year, month, i)
+                    break
+            if found_event: break
+        if found_event: break
+    
+    if not found_event:
+        return jsonify({"error": "Event not found"}), 404
+
+    # New data
+    new_year = str(data.get('year', original_location[0]))
+    new_month = str(data.get('month', original_location[1]))
+    new_day = data.get('day', found_event['day'])
+    new_title = data.get('title', found_event['title']).strip()
+    new_desc = data.get('description', found_event['description']).strip()
+
+    if not new_title or not new_desc:
+        return jsonify({"error": "Title and description are required"}), 400
+
+    # If date changed, we might need to move the event
+    if new_year != original_location[0] or new_month != original_location[1]:
+        # Remove from old location
+        old_year, old_month, old_idx = original_location
+        del existing_data[old_year][old_month][old_idx]
+        
+        # Ensure new location exists
+        if new_year not in existing_data:
+            existing_data[new_year] = {}
+        if new_month not in existing_data[new_year]:
+            existing_data[new_year][new_month] = []
+        
+        # Add to new location with updated info
+        updated_event = {
+            "id": event_id,
+            "day": new_day,
+            "title": new_title,
+            "description": new_desc,
+            "completed": found_event.get("completed", False)
+        }
+        existing_data[new_year][new_month].append(updated_event)
+    else:
+        # Same month/year, just update fields
+        found_event['day'] = new_day
+        found_event['title'] = new_title
+        found_event['description'] = new_desc
+        # We don't need to move it, reference is already in the list
+    
+    save_data(existing_data)
+    return jsonify({"status": "success", "message": "Updated"}), 200
+
 @app.route('/api/events/<event_id>', methods=['DELETE'])
 def delete_event(event_id):
     data = load_data()

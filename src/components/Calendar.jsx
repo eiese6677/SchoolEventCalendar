@@ -59,6 +59,8 @@ function Calendar() {
   const [newDay, setNewDay] = useState(1);
   const [newTitle, setNewTitle] = useState("");
   const [newDesc, setNewDesc] = useState("");
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingEventId, setEditingEventId] = useState(null);
 
   const openAddModal = () => {
     // 현재 보고 있는 연/월로 초기값 설정 (일은 1일로)
@@ -67,6 +69,19 @@ function Calendar() {
     setNewDay(1);
     setNewTitle("");
     setNewDesc("");
+    setIsEditMode(false);
+    setEditingEventId(null);
+    setShowAddModal(true);
+  };
+
+  const openEditModal = (event) => {
+    setNewYear(currentYear);
+    setNewMonth(currentMonth + 1);
+    setNewDay(event.day);
+    setNewTitle(event.title);
+    setNewDesc(event.description);
+    setIsEditMode(true);
+    setEditingEventId(event.id);
     setShowAddModal(true);
   };
 
@@ -88,18 +103,35 @@ function Calendar() {
       description: newDesc,
     };
 
-    axios
-      .post(`${API_BASE_URL}/post_data`, dataToSend)
-      .then((response) => {
-        console.log("Success:", response.data);
-        alert("이벤트가 추가되었습니다.");
-        closeAddModal();
-        fetchEvents(); // 목록 갱신
-      })
-      .catch((error) => {
-        console.error("Error saving event:", error);
-        alert("이벤트 저장 실패");
-      });
+
+
+    if (isEditMode) {
+      axios
+        .put(`${API_BASE_URL}/events/${editingEventId}`, dataToSend)
+        .then((response) => {
+          console.log("Success:", response.data);
+          alert("이벤트가 수정되었습니다.");
+          closeAddModal();
+          fetchEvents();
+        })
+        .catch((error) => {
+          console.error("Error updating event:", error);
+          alert("이벤트 수정 실패");
+        });
+    } else {
+      axios
+        .post(`${API_BASE_URL}/post_data`, dataToSend)
+        .then((response) => {
+          console.log("Success:", response.data);
+          alert("이벤트가 추가되었습니다.");
+          closeAddModal();
+          fetchEvents(); // 목록 갱신
+        })
+        .catch((error) => {
+          console.error("Error saving event:", error);
+          alert("이벤트 저장 실패");
+        });
+    }
   };
 
   const handleDeleteEvent = (eventId) => {
@@ -246,6 +278,20 @@ function Calendar() {
                     </div>
                     <div style={{ display: "flex", gap: "5px" }}>
                       <button
+                        onClick={() => openEditModal(evt)}
+                        style={{
+                          padding: "5px 10px",
+                          fontSize: "0.8rem",
+                          cursor: "pointer",
+                          backgroundColor: "#2196F3",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "4px",
+                        }}
+                      >
+                        수정
+                      </button>
+                      <button
                         onClick={() => handleToggleComplete(evt.id)}
                         style={{
                           padding: "5px 10px",
@@ -290,7 +336,7 @@ function Calendar() {
             <button className="modal-close" onClick={closeAddModal}>
               &times;
             </button>
-            <h2>새 이벤트 추가</h2>
+            <h2>{isEditMode ? "이벤트 수정" : "새 이벤트 추가"}</h2>
             <div className="modal-form">
               <div className="form-group">
                 <label>날짜</label>
@@ -341,7 +387,7 @@ function Calendar() {
                 ></textarea>
               </div>
               <button className="save-btn" onClick={handleSaveEvent}>
-                저장하기
+                {isEditMode ? "수정하기" : "저장하기"}
               </button>
             </div>
           </div>

@@ -25,3 +25,6 @@ dist-ssr
 
 # Python venv
 .venv/
+
+# data files
+events.json
