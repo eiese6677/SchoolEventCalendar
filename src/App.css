@@ -1,3 +1,51 @@
+/* CSS Variables for Theming */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --header-bg: #e0f2f1;
+  --border-color: #999999;
+  /* Increased contrast from #ddd */
+  --cell-bg: #f9f9f9;
+  --cell-hover-bg: #b2ebf2;
+  --day-bg: #ffffff;
+  --event-text: #00796b;
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+  --modal-bg: #ffffff;
+  --button-hover: #f00;
+  --fab-bg: #00796b;
+  --fab-hover: #004d40;
+  --fab-text: #ffffff;
+  --input-border: #ccc;
+  --input-bg: #ffffff;
+  --input-text: #333333;
+}
+
+[data-theme='dark'] {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --header-bg: #333333;
+  --border-color: #555555;
+  --cell-bg: #1e1e1e;
+  --cell-hover-bg: #333333;
+  --day-bg: #1e1e1e;
+  --event-text: #80cbc4;
+  --modal-overlay: rgba(0, 0, 0, 0.7);
+  --modal-bg: #2c2c2c;
+  --button-hover: #ff5252;
+  --fab-bg: #4db6ac;
+  --fab-hover: #26a69a;
+  --fab-text: #121212;
+  --input-border: #555;
+  --input-bg: #333;
+  --input-text: #e0e0e0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
 /* 기존 달력 스타일 그대로 유지 */
 .calendar-grid {
   display: grid;
@@ -10,19 +58,20 @@
   font-weight: bold;
   text-align: center;
   padding: 5px 0;
-  background-color: #e0f2f1;
-  border: 1px solid #ddd;
+  background-color: var(--header-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
 }
 
 .empty-cell {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
+  background-color: var(--cell-bg);
+  border: 1px solid var(--border-color);
   height: 60px;
 }
 
 .day {
-  background-color: #fff;
-  border: 1px solid #ddd;
+  background-color: var(--day-bg);
+  border: 1px solid var(--border-color);
   cursor: pointer;
   padding: 5px;
   display: flex;
@@ -30,16 +79,17 @@
   align-items: center;
   min-height: 60px;
   transition: 0.2s;
+  color: var(--text-color);
 }
 
 .day:hover {
-  background-color: #b2ebf2;
+  background-color: var(--cell-hover-bg);
 }
 
 .event-name {
   margin-top: 5px;
   font-size: 0.75rem;
-  color: #00796b;
+  color: var(--event-text);
   text-align: center;
 }
 
@@ -50,7 +100,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--modal-overlay);
 
   display: flex;
   justify-content: center;
@@ -60,21 +110,31 @@
 
 /* 화면 비율 기반 모달 */
 .modal {
-  position: relative; /* X 버튼 위치 기준 */
-  background-color: #fff;
+  position: relative;
+  /* X 버튼 위치 기준 */
+  background-color: var(--modal-bg);
+  color: var(--text-color);
   padding: 2%;
   border-radius: 8px;
+  border: 1px solid var(--border-color);
 
-  width: 50vw; /* 화면 너비 50% */
-  max-width: 600px; /* 최대 너비 */
-  min-width: 300px; /* 최소 너비 */
+  width: 50vw;
+  /* 화면 너비 50% */
+  max-width: 600px;
+  /* 최대 너비 */
+  min-width: 300px;
+  /* 최소 너비 */
 
-  height: 50vh; /* 화면 높이 50% */
-  max-height: 500px; /* 최대 높이 */
-  min-height: 200px; /* 최소 높이 */
+  height: auto;
+  /* 내용에 맞게 높이 조절 */
+  max-height: 90vh;
+  /* 화면 높이의 90%까지 허용 */
+  min-height: 200px;
+  /* 최소 높이 */
 
   text-align: center;
-  overflow: auto; /* 내용 많으면 스크롤 */
+  overflow: auto;
+  /* 내용 많으면 스크롤 */
 }
 
 /* X 버튼 스타일 */
@@ -86,10 +146,118 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #555;
+  color: var(--text-color);
   transition: color 0.2s;
 }
 
 .modal-close:hover {
-  color: #f00;
+  color: var(--button-hover);
+}
+
+/* 이벤트 추가 FAB 버튼 */
+.add-event-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--fab-bg);
+  color: var(--fab-text);
+  border: none;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s, background-color 0.2s;
+  z-index: 999;
+}
+
+.add-event-btn:hover {
+  background-color: var(--fab-hover);
+  transform: scale(1.1);
+}
+
+.add-event-btn:active {
+  transform: scale(0.95);
+}
+
+
+.transparent-button {
+  background-color: transparent;
+  /* 배경을 완전히 투명하게 만듭니다 */
+  border: none;
+  /* 기본 테두리를 제거합니다 (선택 사항) */
+  cursor: pointer;
+  /* 마우스 오버 시 커서를 포인터로 변경합니다 */
+  /* 추가적인 스타일링 (폰트 색상, 패딩 등) */
+  color: var(--text-color);
+  padding: 10px 15px;
+}
+
+/* --- 모달 내부 폼 스타일 --- */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-group label {
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.date-inputs {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-color);
+}
+
+.date-inputs input {
+  width: 60px;
+  padding: 5px;
+  text-align: center;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background-color: var(--input-bg);
+  color: var(--input-text);
+}
+
+.modal-form input[type="text"],
+.modal-form textarea {
+  padding: 8px;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  font-family: inherit;
+  resize: vertical;
+  background-color: var(--input-bg);
+  color: var(--input-text);
+}
+
+.save-btn {
+  margin-top: 10px;
+  background-color: var(--fab-bg);
+  color: var(--fab-text);
+  border: none;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.save-btn:hover {
+  background-color: var(--fab-hover);
 }
