@@ -13,6 +13,7 @@ CORS(app)
 # Load events from JSON file located in the same directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, "events.json")
+SUGGESTIONS_FILE = os.path.join(BASE_DIR, "suggestions.json")
 
 def load_data():
     if not os.path.exists(DATA_FILE):
@@ -42,6 +43,21 @@ def migrate_ids(data):
     if changed:
         save_data(data)
     return data
+
+def load_suggestions():
+    """Load suggestions from JSON file."""
+    if not os.path.exists(SUGGESTIONS_FILE):
+        return []
+    try:
+        with open(SUGGESTIONS_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+def save_suggestions(suggestions):
+    """Save suggestions to JSON file."""
+    with open(SUGGESTIONS_FILE, "w", encoding="utf-8") as f:
+        json.dump(suggestions, f, ensure_ascii=False, indent=2)
 
 @app.route("/api/events", methods=["GET"])
 def get_events():
@@ -203,6 +219,40 @@ def toggle_complete(event_id):
         return jsonify({"status": "success", "completed": new_status}), 200
     else:
         return jsonify({"error": "Event not found"}), 404
+
+@app.route("/api/suggestions", methods=["POST"])
+def post_suggestion():
+    """Save user suggestion."""
+    data = request.json
+    if data is None:
+        return jsonify({"error": "No JSON data received"}), 400
+
+    message = data.get("message", "").strip()
+    
+    if not message:
+        return jsonify({"error": "건의 메시지는 필수 입력 항목입니다."}), 400
+    
+    suggestions = load_suggestions()
+    
+    new_suggestion = {
+        "id": str(uuid.uuid4()),
+        "message": message,
+        "timestamp": str(__import__('datetime').datetime.now())
+    }
+    
+    suggestions.append(new_suggestion)
+    save_suggestions(suggestions)
+    
+    return jsonify({
+        "status": "success",
+        "message": "건의해주셔서 감사합니다!"
+    }), 200
+
+@app.route("/api/suggestions", methods=["GET"])
+def get_suggestions():
+    """Get all suggestions."""
+    suggestions = load_suggestions()
+    return jsonify(suggestions)
 
 @app.route("/")
 def serve():
