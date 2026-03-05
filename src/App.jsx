@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from "react";
 import Calendar from "./components/Calendar.jsx";
+import Login from "./components/Login.jsx";
 import "./App.css";
+import "./components/Login.css";
 
 function App() {
     const [theme, setTheme] = useState("light");
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showSuggestionModal, setShowSuggestionModal] = useState(false);
     const [suggestionMessage, setSuggestionMessage] = useState("");
     const [suggestions, setSuggestions] = useState([]);
+
+    // Get auth token from localStorage
+    const getAuthHeaders = () => {
+        const token = localStorage.getItem('authToken');
+        return token ? { 'Authorization': `Bearer ${token}` } : {};
+    };
 
     const toggleTheme = () => {
         setTheme((prev) => (prev === "light" ? "dark" : "light"));
@@ -16,8 +25,19 @@ function App() {
         document.body.setAttribute("data-theme", theme);
     }, [theme]);
 
+    const handleLogin = () => {
+        setIsLoggedIn(true);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('authToken');
+        setIsLoggedIn(false);
+    };
+
     const fetchSuggestions = () => {
-        fetch("/api/suggestions")
+        fetch("/api/suggestions", {
+            headers: getAuthHeaders()
+        })
             .then((res) => {
                 if (!res.ok) {
                     throw new Error("Network response was not ok");
@@ -37,7 +57,8 @@ function App() {
         fetch("/api/suggestions", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                ...getAuthHeaders()
             },
             body: JSON.stringify({
                 message: suggestionMessage
@@ -60,23 +81,77 @@ function App() {
             });
     };
 
+    // Check authentication on app load
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            // Verify token is still valid
+            fetch('/api/events', {
+                headers: getAuthHeaders()
+            })
+                .then(response => {
+                    if (response.ok) {
+                        setIsLoggedIn(true);
+                    } else {
+                        localStorage.removeItem('authToken');
+                    }
+                })
+                .catch(() => {
+                    localStorage.removeItem('authToken');
+                });
+        }
+    }, []);
+
+    if (!isLoggedIn) {
+        return (
+            <div style={{
+                fontFamily: "Arial, sans-serif",
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                margin: 0,
+                padding: 0,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100vh",
+                color: "white"
+            }}>
+                <Login onLogin={handleLogin} />
+            </div>
+        );
+    }
+
     return (
         <div className="App" style={{ minHeight: "100vh", padding: "20px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
                 <h1>학교 일정 캘린더</h1>
-                <button
-                    onClick={toggleTheme}
-                    style={{
-                        padding: "8px 16px",
-                        borderRadius: "20px",
-                        border: "1px solid var(--border-color)",
-                        background: "var(--cell-bg)",
-                        color: "var(--text-color)",
-                        cursor: "pointer"
-                    }}
-                >
-                    {theme === "light" ? "🌙 다크 모드" : "☀️ 라이트 모드"}
-                </button>
+                <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                    <button
+                        onClick={toggleTheme}
+                        style={{
+                            padding: "8px 16px",
+                            borderRadius: "20px",
+                            border: "1px solid var(--border-color)",
+                            background: "var(--cell-bg)",
+                            color: "var(--text-color)",
+                            cursor: "pointer"
+                        }}
+                    >
+                        {theme === "light" ? "🌙 다크 모드" : "☀️ 라이트 모드"}
+                    </button>
+                    <button
+                        onClick={handleLogout}
+                        style={{
+                            padding: "8px 16px",
+                            borderRadius: "20px",
+                            border: "1px solid var(--border-color)",
+                            background: "var(--cell-bg)",
+                            color: "var(--text-color)",
+                            cursor: "pointer"
+                        }}
+                    >
+                        로그아웃
+                    </button>
+                </div>
             </div>
             <Calendar />
 

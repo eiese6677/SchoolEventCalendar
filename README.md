@@ -59,11 +59,13 @@ npm run build
 Python 환경이 필요합니다.
 
 ```bash
+# 1. 환경변수 설정
+export ADMIN_PASSWORD="something_secure"
 
-# 1. 필요한 라이브러리 설치
+# 2. 필요한 라이브러리 설치
 uv sync
 
-# 2. 서버 실행
+# 3. 서버 실행
 python3 -m flask_server.app
 ```
 * 서버는 기본적으로 `http://localhost:5000`에서 실행됩니다.

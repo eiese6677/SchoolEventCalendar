@@ -3,6 +3,23 @@ from flask_cors import CORS
 import json
 import os
 import uuid
+from functools import wraps
+
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+
+def require_auth(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({"error": "인증이 필요합니다"}), 401
+        
+        token = auth_header.replace('Bearer ', '')
+        if token != ADMIN_PASSWORD:
+            return jsonify({"error": "잘못된 인증 정보입니다"}), 401
+        
+        return f(*args, **kwargs)
+    return decorated_function
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DIST_DIR = os.path.join(BASE_DIR, "../dist")
@@ -60,12 +77,14 @@ def save_suggestions(suggestions):
         json.dump(suggestions, f, ensure_ascii=False, indent=2)
 
 @app.route("/api/events", methods=["GET"])
+@require_auth
 def get_events():
     data = load_data()
     data = migrate_ids(data) # Ensure integrity on load
     return jsonify(data)
 
 @app.route('/api/post_data', methods=['POST'])
+@require_auth
 def receive_data():
     data = request.json
     if data is None:
@@ -110,6 +129,7 @@ def receive_data():
     }), 200
 
 @app.route('/api/events/<event_id>', methods=['PUT'])
+@require_auth
 def update_event(event_id):
     data = request.json
     if not data:
@@ -176,6 +196,7 @@ def update_event(event_id):
     return jsonify({"status": "success", "message": "Updated"}), 200
 
 @app.route('/api/events/<event_id>', methods=['DELETE'])
+@require_auth
 def delete_event(event_id):
     data = load_data()
     deleted = False
@@ -198,6 +219,7 @@ def delete_event(event_id):
         return jsonify({"error": "Event not found"}), 404
 
 @app.route('/api/events/<event_id>/complete', methods=['PATCH'])
+@require_auth
 def toggle_complete(event_id):
     data = load_data()
     found = False
@@ -221,6 +243,7 @@ def toggle_complete(event_id):
         return jsonify({"error": "Event not found"}), 404
 
 @app.route("/api/suggestions", methods=["POST"])
+@require_auth
 def post_suggestion():
     """Save user suggestion."""
     data = request.json
@@ -249,10 +272,22 @@ def post_suggestion():
     }), 200
 
 @app.route("/api/suggestions", methods=["GET"])
+@require_auth
 def get_suggestions():
     """Get all suggestions."""
     suggestions = load_suggestions()
     return jsonify(suggestions)
+
+@app.route("/api/login", methods=["POST"])
+def login():
+    data = request.json
+    if not data or "password" not in data:
+        return jsonify({"error": "비밀번호가 필요합니다"}), 400
+    
+    if data["password"] == ADMIN_PASSWORD:
+        return jsonify({"token": ADMIN_PASSWORD, "message": "로그인 성공"})
+    else:
+        return jsonify({"error": "잘못된 비밀번호입니다"}), 401
 
 @app.route("/")
 def serve():

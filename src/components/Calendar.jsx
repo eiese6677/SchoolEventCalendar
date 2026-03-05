@@ -9,6 +9,12 @@ function Calendar() {
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth()); // 0=1월, 11=12월
 
+  // Get auth token from localStorage
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('authToken');
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  };
+
   // 이벤트 Map 생성 (day -> event[])
   const eventMap = useMemo(() => {
     const yearEvents = events[currentYear] || {};
@@ -35,7 +41,9 @@ function Calendar() {
 
   // 이벤트 데이터 가져오기 함수
   const fetchEvents = () => {
-    fetch(`${API_BASE_URL}/events`)
+    fetch(`${API_BASE_URL}/events`, {
+      headers: getAuthHeaders()
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error("Network response was not ok");
@@ -108,7 +116,9 @@ function Calendar() {
 
     if (isEditMode) {
       axios
-        .put(`${API_BASE_URL}/events/${editingEventId}`, dataToSend)
+        .put(`${API_BASE_URL}/events/${editingEventId}`, dataToSend, {
+          headers: getAuthHeaders()
+        })
         .then((response) => {
           console.log("Success:", response.data);
           alert("이벤트가 수정되었습니다.");
@@ -121,7 +131,9 @@ function Calendar() {
         });
     } else {
       axios
-        .post(`${API_BASE_URL}/post_data`, dataToSend)
+        .post(`${API_BASE_URL}/post_data`, dataToSend, {
+          headers: getAuthHeaders()
+        })
         .then((response) => {
           console.log("Success:", response.data);
           alert("이벤트가 추가되었습니다.");
@@ -139,7 +151,9 @@ function Calendar() {
     if (!window.confirm("정말로 삭제하시겠습니까?")) return;
 
     axios
-      .delete(`${API_BASE_URL}/events/${eventId}`)
+      .delete(`${API_BASE_URL}/events/${eventId}`, {
+        headers: getAuthHeaders()
+      })
       .then(() => {
         alert("삭제되었습니다.");
         fetchEvents(); // Refresh events
@@ -153,7 +167,9 @@ function Calendar() {
 
   const handleToggleComplete = (eventId) => {
     axios
-      .patch(`${API_BASE_URL}/events/${eventId}/complete`)
+      .patch(`${API_BASE_URL}/events/${eventId}/complete`, {}, {
+        headers: getAuthHeaders()
+      })
       .then((res) => {
         fetchEvents(); // Refresh events
         // Modal updates automatically via derived state
