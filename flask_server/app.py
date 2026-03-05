@@ -1,11 +1,14 @@
-from flask import request, Flask, jsonify
+from flask import request, Flask, jsonify, send_from_directory
 from flask_cors import CORS
 import json
 import os
 import uuid
 
-app = Flask(__name__)
-CORS(app)  # React에서 API 호출 가능하게
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DIST_DIR = os.path.join(BASE_DIR, "../dist")
+
+app = Flask(__name__, static_folder=DIST_DIR, static_url_path="")
+CORS(app)
 
 # Load events from JSON file located in the same directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -200,6 +203,10 @@ def toggle_complete(event_id):
         return jsonify({"status": "success", "completed": new_status}), 200
     else:
         return jsonify({"error": "Event not found"}), 404
+
+@app.route("/")
+def serve():
+    return send_from_directory(app.static_folder, "index.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)

@@ -42,23 +42,7 @@ React 프론트엔드와 Flask 백엔드로 구성되어 있으며, 컴시간(Co
 
 ## 💿 설치 및 실행 방법
 
-### 1. 백엔드 (Backend) 설정
-
-Python 환경이 필요합니다.
-
-```bash
-# 1. 백엔드 디렉토리로 이동 (또는 루트에서)
-cd flask-server
-
-# 2. 필요한 라이브러리 설치
-pip install flask flask-cors requests
-
-# 3. 서버 실행
-python app.py
-```
-* 서버는 기본적으로 `http://localhost:5000`에서 실행됩니다.
-
-### 2. 프론트엔드 (Frontend) 설정
+### 1. 프론트엔드 (Frontend) 빌드
 
 Node.js 환경이 필요합니다.
 
@@ -67,9 +51,22 @@ Node.js 환경이 필요합니다.
 npm install
 
 # 2. 개발 서버 실행
-npm run dev
+npm run build
 ```
-* 브라우저에서 `http://localhost:5173` (또는 터미널에 표시된 포트)으로 접속하여 확인합니다.
+
+### 2. 백엔드 (Backend) 실행
+
+Python 환경이 필요합니다.
+
+```bash
+
+# 1. 필요한 라이브러리 설치
+uv sync
+
+# 2. 서버 실행
+python3 -m flask_server.app
+```
+* 서버는 기본적으로 `http://localhost:5000`에서 실행됩니다.
 
 ## 📝 API 명세
 
@@ -83,5 +80,5 @@ npm run dev
 
 ## 💡 참고 사항
 
-- **데이터 저장**: 데이터는 `flask-server/events.json` 파일에 저장되므로, 서버를 재시작해도 데이터가 유지됩니다.
+- **데이터 저장**: 데이터는 `flask_server/events.json` 파일에 저장되므로, 서버를 재시작해도 데이터가 유지됩니다.
 - **포트 충돌**: 5000번 포트가 사용 중일 경우 포트 설정을 변경하세요.
