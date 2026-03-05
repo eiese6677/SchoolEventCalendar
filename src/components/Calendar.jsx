@@ -5,8 +5,9 @@ import Day from "./Day.jsx";
 function Calendar() {
   const [events, setEvents] = useState({});
   const [selectedDay, setSelectedDay] = useState(null); // Refactored from selectedEvent object to just day number
-  const [currentYear, setCurrentYear] = useState(2025);
-  const [currentMonth, setCurrentMonth] = useState(11); // 0=1월, 9=10월
+  const today = new Date();
+  const [currentYear, setCurrentYear] = useState(today.getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth()); // 0=1월, 11=12월
 
   // 이벤트 Map 생성 (day -> event[])
   const eventMap = useMemo(() => {
@@ -54,8 +55,8 @@ function Calendar() {
 
   // --- 이벤트 추가 모달 상태 및 핸들러 ---
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newYear, setNewYear] = useState(2025);
-  const [newMonth, setNewMonth] = useState(1);
+  const [newYear, setNewYear] = useState(today.getFullYear());
+  const [newMonth, setNewMonth] = useState(today.getMonth() + 1);
   const [newDay, setNewDay] = useState(1);
   const [newTitle, setNewTitle] = useState("");
   const [newDesc, setNewDesc] = useState("");
